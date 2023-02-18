@@ -1,8 +1,8 @@
 package com.cojayero.dogedex3
 
-data class Dog (
-    val id:Long,
-    val index:Int,
+data class Dog(
+    val id: Long,
+    val index: Int,
     val name: String,
     val type: String,
     val heightFemale: Double,
@@ -11,5 +11,5 @@ data class Dog (
     val lifeExpectancy: String,
     val temperament: String,
     val weightFemale: Double,
-    val weightMale:Double
+    val weightMale: Double
 )

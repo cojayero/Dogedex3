@@ -5,6 +5,7 @@ plugins {
 }
 
 android {
+    namespace 'com.cojayero.dogedex3'
     compileSdk 33
 
     defaultConfig {
@@ -31,9 +32,9 @@ android {
         jvmTarget = '1.8'
     }
     buildFeatures {
-        dataBinding true
+        dataBinding = true
     }
-    namespace 'com.cojayero.dogedex3'
+
 }
 
 dependencies {
