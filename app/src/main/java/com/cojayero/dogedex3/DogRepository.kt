@@ -1,15 +1,19 @@
 package com.cojayero.dogedex3
 
 import com.cojayero.dogedex3.api.DogsApi.retrofitService
+import com.cojayero.dogedex3.api.dto.DogDTOMapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class DogRepository {
-    suspend fun downloadDogs():List<Dog>{
-      return  withContext(Dispatchers.IO){
+    suspend fun downloadDogs(): List<Dog> {
+        return withContext(Dispatchers.IO) {
             //getFakeDogs()
-         val dogListApiResponse =  retrofitService.getAllDogs()
-          dogListApiResponse.data.dogs
+            val dogListApiResponse = retrofitService.getAllDogs()
+            val dogDTOList = dogListApiResponse.data.dogs
+            val dogDTOMapper = DogDTOMapper()
+            dogDTOMapper.fromDogDTOListToDogDomainList(dogDTOList)
+
         }
     }
     /*
