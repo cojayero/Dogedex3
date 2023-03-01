@@ -1,18 +1,27 @@
 package com.cojayero.dogedex3
 
+import com.cojayero.dogedex3.api.ApiResponseStatus
 import com.cojayero.dogedex3.api.DogsApi.retrofitService
 import com.cojayero.dogedex3.api.dto.DogDTOMapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.net.UnknownHostException
 
 class DogRepository {
-    suspend fun downloadDogs(): List<Dog> {
+    suspend fun downloadDogs(): ApiResponseStatus {
         return withContext(Dispatchers.IO) {
-            //getFakeDogs()
-            val dogListApiResponse = retrofitService.getAllDogs()
-            val dogDTOList = dogListApiResponse.data.dogs
-            val dogDTOMapper = DogDTOMapper()
-            dogDTOMapper.fromDogDTOListToDogDomainList(dogDTOList)
+            try {
+                //getFakeDogs()
+                val dogListApiResponse = retrofitService.getAllDogs()
+                val dogDTOList = dogListApiResponse.data.dogs
+                val dogDTOMapper = DogDTOMapper()
+
+                ApiResponseStatus.Success(dogDTOMapper.fromDogDTOListToDogDomainList(dogDTOList))
+            } catch (e:UnknownHostException){
+                ApiResponseStatus.Error(R.string.unknown_host_exception)
+            } catch (e:Exception) {
+                ApiResponseStatus.Error(R.string.unknown_error)
+            }
 
         }
     }

@@ -8,4 +8,7 @@
     <string name="error_showing_dog_not_found">Dog not found</string>
     <string name="dog_index_format">#%d</string>
     <string name="dog_life_expectancy_format">%s años</string>
+    <string name="Error_al_descargar">Hubo un error al descargar datos</string>
+    <string name="unknown_host_exception">NO hay internet</string>
+    <string name="unknown_error">Error desconocido</string>
 </resources>

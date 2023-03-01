@@ -3,17 +3,20 @@ package com.cojayero.dogedex3.doglist
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cojayero.dogedex3.DogListViewModel
+import com.cojayero.dogedex3.R
 import com.cojayero.dogedex3.api.ApiResponseStatus
 import com.cojayero.dogedex3.databinding.ActivityDogListBinding
 import com.cojayero.dogedex3.dogdetail.DogDetailActivity
 import com.cojayero.dogedex3.dogdetail.DogDetailActivity.Companion.DOG_KEY
 
-private val  TAG = DogListActivity::class.java.simpleName
+private val TAG = DogListActivity::class.java.simpleName
+
 class DogListActivity : AppCompatActivity() {
     private val dogListViewModel: DogListViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,6 +25,7 @@ class DogListActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val recycler = binding.dogRecycler
+        val loadingWheel = binding.loadingWheel
         recycler.layoutManager = LinearLayoutManager(this)
         val adapter = DogAdapter()
         /**
@@ -29,8 +33,10 @@ class DogListActivity : AppCompatActivity() {
          */
         adapter.setOnItemClickListener {
             //Paso el dog a DogDetail activity
-            val intent = Intent(this,
-                                DogDetailActivity::class.java)
+            val intent = Intent(
+                this,
+                DogDetailActivity::class.java
+            )
             Log.d(TAG, "selected Dog $it")
             intent.putExtra(DOG_KEY, it)
             startActivity(intent)
@@ -42,19 +48,19 @@ class DogListActivity : AppCompatActivity() {
             Log.d("Test", dogList.toString())
             adapter.submitList(dogList)
         }
-dogListViewModel.status.observe(this){
-    status -> when(status){
-        ApiResponseStatus.LOADING -> {
-            // Mostrar loading status
+        dogListViewModel.status.observe(this) { status ->
+           when(status){
+               is ApiResponseStatus.Error -> {
+                loadingWheel.visibility = View.GONE
+                   Toast.makeText(this,status.messageId,Toast.LENGTH_LONG).show()
+               }
+               is ApiResponseStatus.Loading -> loadingWheel.visibility = View.VISIBLE
+               is ApiResponseStatus.Success -> {
+                   loadingWheel.visibility = View.GONE
+
+               }
+           }
         }
-        ApiResponseStatus.ERROR -> {
-            Toast.makeText(this,"Hubo un error al descargar datos",Toast.LENGTH_SHORT).show()
-        }
-    ApiResponseStatus.SUCCESS -> {
-        TODO()
-    }
-}
-}
 
     }
 
