@@ -3,6 +3,7 @@ package com.cojayero.dogedex3.doglist
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.AdapterView.OnItemClickListener
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +20,13 @@ class DogAdapter : ListAdapter<Dog, DogAdapter.DogViewHolder>(DiffCallback) {
             return oldItem.id == newItem.id
         }
     }
+
+    // Añadimos un event listener en el adapter, para que cuando un elemenot se seleccione se use.
+    private var onItemClickListener:((Dog)-> Unit)? = null
+    fun setOnItemClickListener(onItemClickListener: (Dog)->Unit){
+        this.onItemClickListener = onItemClickListener
+    }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DogViewHolder {
         val binding = DogListItemBinding.inflate(LayoutInflater.from(parent.context))
@@ -37,6 +45,13 @@ class DogAdapter : ListAdapter<Dog, DogAdapter.DogViewHolder>(DiffCallback) {
         fun bind(dog: Dog) {
 
             binding.dogName.text = dog.name
+            /**
+             * Aqui llamamos al listener que hemos creado, asociandolo a un elemento de la vista
+             * que presentamos.
+             */
+            binding.dogName.setOnClickListener {
+                onItemClickListener?.invoke(dog)
+            }
         }
     }
 
