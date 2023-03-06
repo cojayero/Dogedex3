@@ -7,6 +7,7 @@ import android.widget.AdapterView.OnItemClickListener
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 import com.cojayero.dogedex3.Dog
 import com.cojayero.dogedex3.databinding.DogListItemBinding
 private val TAG = DogAdapter::class.java.simpleName
@@ -44,14 +45,15 @@ class DogAdapter : ListAdapter<Dog, DogAdapter.DogViewHolder>(DiffCallback) {
         RecyclerView.ViewHolder(binding.root) {
         fun bind(dog: Dog) {
 
-            binding.dogName.text = dog.name
+           // binding.dogName.text = dog.name
             /**
              * Aqui llamamos al listener que hemos creado, asociandolo a un elemento de la vista
              * que presentamos.
              */
-            binding.dogName.setOnClickListener {
+            binding.dogListItemLayout.setOnClickListener {
                 onItemClickListener?.invoke(dog)
             }
+            binding.dogImage.load(dog.imageUrl)
         }
     }
 

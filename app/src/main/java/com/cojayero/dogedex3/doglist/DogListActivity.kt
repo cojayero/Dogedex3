@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cojayero.dogedex3.DogListViewModel
 import com.cojayero.dogedex3.R
@@ -16,7 +17,7 @@ import com.cojayero.dogedex3.dogdetail.DogDetailActivity
 import com.cojayero.dogedex3.dogdetail.DogDetailActivity.Companion.DOG_KEY
 
 private val TAG = DogListActivity::class.java.simpleName
-
+private const val GRID_LAYOUT_COLUMNS = 3
 class DogListActivity : AppCompatActivity() {
     private val dogListViewModel: DogListViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,7 +27,7 @@ class DogListActivity : AppCompatActivity() {
 
         val recycler = binding.dogRecycler
         val loadingWheel = binding.loadingWheel
-        recycler.layoutManager = LinearLayoutManager(this)
+        recycler.layoutManager = GridLayoutManager(this, GRID_LAYOUT_COLUMNS)
         val adapter = DogAdapter()
         /**
          * Añadimos el listener para cuando hagamos click en el item
