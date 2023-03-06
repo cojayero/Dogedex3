@@ -13,19 +13,20 @@ class DogListViewModel : ViewModel() {
         get() = _dogList
 
     private val _status = MutableLiveData<ApiResponseStatus<List<Dog>>>()
-    val status : LiveData<ApiResponseStatus<List<Dog>>>
+    val status: LiveData<ApiResponseStatus<List<Dog>>>
         get() = _status
 
 
-    private  val dogRepository = DogRepository()
+    private val dogRepository = DogRepository()
+
     init {
         downloadDogs()
     }
 
     private fun downloadDogs() {
         viewModelScope.launch {
-                _status.value = ApiResponseStatus.Loading()
-                handleDownloadStatus(dogRepository.downloadDogs())
+            _status.value = ApiResponseStatus.Loading()
+            handleDownloadStatus(dogRepository.downloadDogs())
         }
 
     }

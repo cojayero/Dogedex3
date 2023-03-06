@@ -7,15 +7,14 @@ import kotlinx.coroutines.withContext
 import java.net.UnknownHostException
 
 suspend fun <T> makeNetworkCall(
-    call:suspend () -> T
+    call: suspend () -> T
 ):ApiResponseStatus<T>{
     return withContext(Dispatchers.IO) {
         try {
-            //llamamos a nuestra lambda que hemos pasado como parámetro
             ApiResponseStatus.Success(call())
-        } catch (e: UnknownHostException){
+        } catch (e: UnknownHostException) {
             ApiResponseStatus.Error(R.string.unknown_host_exception)
-        } catch (e:Exception) {
+        } catch (e: Exception) {
             ApiResponseStatus.Error(R.string.unknown_error)
         }
 

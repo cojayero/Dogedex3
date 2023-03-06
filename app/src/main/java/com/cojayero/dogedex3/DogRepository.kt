@@ -4,26 +4,11 @@ import com.cojayero.dogedex3.api.ApiResponseStatus
 import com.cojayero.dogedex3.api.DogsApi.retrofitService
 import com.cojayero.dogedex3.api.dto.DogDTOMapper
 import com.cojayero.dogedex3.api.makeNetworkCall
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import java.net.UnknownHostException
 
 class DogRepository {
     suspend fun downloadDogs(): ApiResponseStatus<List<Dog>> {
-     return   makeNetworkCall {
-            val dogListApiResponse = retrofitService.getAllDogs()
-            val dogDTOList = dogListApiResponse.data.dogs
-            val dogDTOMapper = DogDTOMapper()
-            dogDTOMapper.fromDogDTOListToDogDomainList(dogDTOList)
-        }
-    }
-}
-
-
-
-
-
-        /*  return withContext(Dispatchers.IO) {
+        /*
+        return withContext(Dispatchers.IO) {
             try {
                 //getFakeDogs()
                 val dogListApiResponse = retrofitService.getAllDogs()
@@ -31,16 +16,22 @@ class DogRepository {
                 val dogDTOMapper = DogDTOMapper()
 
                 ApiResponseStatus.Success(dogDTOMapper.fromDogDTOListToDogDomainList(dogDTOList))
-            } catch (e:UnknownHostException){
+            } catch (e: UnknownHostException) {
                 ApiResponseStatus.Error(R.string.unknown_host_exception)
-            } catch (e:Exception) {
+            } catch (e: Exception) {
                 ApiResponseStatus.Error(R.string.unknown_error)
             }
 
         }
-    } */
-
-        /*
+        */
+        return makeNetworkCall {
+            val dogListApiResponse = retrofitService.getAllDogs()
+            val dogDTOList = dogListApiResponse.data.dogs
+            val dogDTOMapper = DogDTOMapper()
+            dogDTOMapper.fromDogDTOListToDogDomainList(dogDTOList)
+        }
+    }
+    /*
     private fun getFakeDogs(): MutableList<Dog> {
         val dogList = mutableListOf<Dog>()
         dogList.add(
@@ -89,5 +80,4 @@ class DogRepository {
     }
     *
      */
-
-
+}
