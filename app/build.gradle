@@ -46,11 +46,15 @@ dependencies {
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     //  implementacion del VideModelScope para poder  usar corrutinas en la actividad
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.0'
     implementation 'androidx.activity:activity-ktx:1.6.1'
     //implementación  de retrofit y Moshi
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-moshi:2.9.0'
+
+    //Implementar funciones de logging
+   implementation "com.squareup.okhttp3:logging-interceptor:4.10.0"
+
     // Implementar coil para descarga de imágenes
     implementation "io.coil-kt:coil:2.2.2"
 
@@ -61,7 +65,7 @@ dependencies {
 
     implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'
     implementation 'androidx.core:core-ktx:1.9.0'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.0'
 
 
     testImplementation 'junit:junit:4.13.2'

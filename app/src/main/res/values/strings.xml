@@ -20,4 +20,18 @@
     <string name="register">Register</string>
     <string name="sign_up">Sign Up</string>
     <string name="confirm_password">Confirm password</string>
+    <string name="email_is_not_valid">Email is not valid</string>
+    <string name="password_is_not_valid">Password is not valid</string>
+    <string name="confirmation_password_cant_be_empty">Confirmation password can\'t be empty</string>
+    <string name="passwords_doesnt_match">Passwords doesn\'t match</string>
+    <string name="error_sign_up">Error signing up</string>
+    <string name="error_sign_in">Error signing in</string>
+    <string name="user_already_exists">User already exists</string>
+    <string name="there_was_an_error">There was an error</string>
+    <string name="wrong_user_or_password">Wrong user password combination</string>
+    <string name="take_a_picture">take a picture</string>
+    <string name="list_dogs">List dogs</string>
+    <string name="settings">Settigs</string>
+    <string name="log_out">Log out</string>
+    <string name="error_adding_dog">Error adding dog</string>
 </resources>

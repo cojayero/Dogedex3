@@ -1,5 +1,6 @@
 package com.cojayero.dogedex3
 
+import android.annotation.SuppressLint
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,8 +13,8 @@ class DogListViewModel : ViewModel() {
     val dogList: LiveData<List<Dog>>
         get() = _dogList
 
-    private val _status = MutableLiveData<ApiResponseStatus<List<Dog>>>()
-    val status: LiveData<ApiResponseStatus<List<Dog>>>
+    private val _status = MutableLiveData<ApiResponseStatus<Any>>()
+    val status: LiveData<ApiResponseStatus<Any>>
         get() = _status
 
 
@@ -31,10 +32,28 @@ class DogListViewModel : ViewModel() {
 
     }
 
+    @SuppressLint("NullSafeMutableLiveData")
+    @Suppress("UNCHECKED_CAST")
     private fun handleDownloadStatus(apiResponseStatus: ApiResponseStatus<List<Dog>>) {
         if (apiResponseStatus is ApiResponseStatus.Success) {
             _dogList.value = apiResponseStatus.data
         }
+        _status.value = apiResponseStatus as ApiResponseStatus<Any>
+    }
+
+    fun addDogToUser(dogId:String){
+        viewModelScope.launch {
+            _status.value = ApiResponseStatus.Loading()
+           handleAddDogToUserResponseStatus(dogRepository.addDogToUser(dogId))
+        }
+    }
+
+    @SuppressLint("NullSafeMutableLiveData")
+    private fun handleAddDogToUserResponseStatus(apiResponseStatus: ApiResponseStatus<Any>) {
+            if(apiResponseStatus is ApiResponseStatus.Success){
+                downloadDogs()
+            }
         _status.value = apiResponseStatus
     }
+
 }

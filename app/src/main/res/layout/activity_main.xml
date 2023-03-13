@@ -7,28 +7,40 @@
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MainActivity">
 
-        <TextView
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hello World!"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_margin="16dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/ic_baseline_photo_camera"
+            android:id="@+id/take_photo_fab"
+            android:contentDescription="@string/take_a_picture" />
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/fragmentContainerView"
-            android:name="com.cojayero.dogedex3.auth.ui.main.LoginFragment"
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:layout_editor_absoluteX="160dp"
-            tools:layout_editor_absoluteY="205dp"
-            tools:ignore="MissingConstraints" />
+            android:layout_margin="16dp"
+            android:layout_alignParentBottom="true"
+            android:layout_toStartOf="@id/take_photo_fab"
+            android:src="@drawable/ic_baseline_list"
+            android:id="@+id/dog_list_fab"
+            android:contentDescription="@string/list_dogs"
+            tools:ignore="RelativeOverlap" />
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_alignParentBottom="true"
+            android:layout_toEndOf="@id/take_photo_fab"
+            android:src="@drawable/baseline_settings_24"
+            android:id="@+id/settings_fab"
+            android:contentDescription="@string/settings" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </RelativeLayout>
 </layout>

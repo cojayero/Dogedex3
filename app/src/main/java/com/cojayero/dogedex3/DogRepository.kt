@@ -2,6 +2,7 @@ package com.cojayero.dogedex3
 
 import com.cojayero.dogedex3.api.ApiResponseStatus
 import com.cojayero.dogedex3.api.DogsApi.retrofitService
+import com.cojayero.dogedex3.api.dto.AddDogToUserDTO
 import com.cojayero.dogedex3.api.dto.DogDTOMapper
 import com.cojayero.dogedex3.api.makeNetworkCall
 
@@ -80,4 +81,15 @@ class DogRepository {
     }
     *
      */
+
+    suspend fun addDogToUser(dogId: String): ApiResponseStatus<Any> = makeNetworkCall {
+        val addDogToUserDTO = AddDogToUserDTO(dogId)
+        val defaultResponse = retrofitService.addDogToUser(addDogToUserDTO)
+        if (!defaultResponse.isSuccess) {
+            throw Exception(defaultResponse.message)
+        }
+
+    }
+
+
 }
