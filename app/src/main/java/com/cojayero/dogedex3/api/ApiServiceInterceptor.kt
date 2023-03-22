@@ -18,9 +18,9 @@ object ApiServiceInterceptor : Interceptor {
         val request = chain.request()
         val requestBuilder = request.newBuilder()
         val headers = request.headers(NEEDS_AUTH_KEY)
-        Log.d(TAG, "$headers")
+        Log.d(TAG, "$headers  ${headers.javaClass.simpleName}")
 
-        if (request.headers(NEEDS_AUTH_KEY).isNullOrEmpty()) {
+        if (request.headers(NEEDS_AUTH_KEY).isNotEmpty()) {
             // needs credentials
             Log.d(TAG, "Intercept: needs credentials")
             if (sessionToken == null) {

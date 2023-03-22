@@ -2,13 +2,16 @@ package com.cojayero.dogedex3.doglist
 
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView.OnItemClickListener
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.cojayero.dogedex3.Dog
+import com.cojayero.dogedex3.R
 import com.cojayero.dogedex3.databinding.DogListItemBinding
 private val TAG = DogAdapter::class.java.simpleName
 class DogAdapter : ListAdapter<Dog, DogAdapter.DogViewHolder>(DiffCallback) {
@@ -26,6 +29,13 @@ class DogAdapter : ListAdapter<Dog, DogAdapter.DogViewHolder>(DiffCallback) {
     private var onItemClickListener:((Dog)-> Unit)? = null
     fun setOnItemClickListener(onItemClickListener: (Dog)->Unit){
         this.onItemClickListener = onItemClickListener
+    }
+    // Añadimos un event listener en el adapter, para que cuando un elemenot se seleccione
+    // con pulsacion larga.
+    private var onLongItemClickListener:((Dog)-> Unit)? = null
+    fun setOnLongItemClickListener(onLongItemClickListener: (Dog)->Unit){
+        Log.d(TAG,"---->setOnLongItemClickListener")
+        this.onLongItemClickListener = onLongItemClickListener
     }
 
 
@@ -45,15 +55,38 @@ class DogAdapter : ListAdapter<Dog, DogAdapter.DogViewHolder>(DiffCallback) {
         RecyclerView.ViewHolder(binding.root) {
         fun bind(dog: Dog) {
 
-           // binding.dogName.text = dog.name
-            /**
-             * Aqui llamamos al listener que hemos creado, asociandolo a un elemento de la vista
-             * que presentamos.
-             */
-            binding.dogListItemLayout.setOnClickListener {
-                onItemClickListener?.invoke(dog)
-            }
-            binding.dogImage.load(dog.imageUrl)
+           if(dog.inCollection) {
+               binding.dogImage.visibility = View.VISIBLE
+               binding.dogName.visibility = View.GONE
+               binding.dogListItemLayout.background = ContextCompat.getDrawable(
+                   binding.dogImage.context,
+                   R.drawable.dog_list_item_background
+               )
+
+               // binding.dogName.text = dog.name
+               /**
+                * Aqui llamamos al listener que hemos creado, asociandolo a un elemento de la vista
+                * que presentamos.
+                */
+               binding.dogListItemLayout.setOnClickListener {
+                   onItemClickListener?.invoke(dog)
+               }
+               binding.dogListItemLayout.setOnLongClickListener {
+                   onLongItemClickListener?.invoke(dog)
+                   true
+               }
+               binding.dogImage.load(dog.imageUrl)
+           } else {
+               binding.dogName.visibility = View.VISIBLE
+               binding.dogName.text = dog.id.toString()
+               binding.dogImage.visibility = View.GONE
+               binding.dogListItemLayout.background = ContextCompat.getDrawable(
+                   binding.dogImage.context,
+                   R.drawable.dog_list_item_null_background
+               )
+           }
+
+
         }
     }
 

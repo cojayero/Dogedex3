@@ -34,4 +34,7 @@
     <string name="settings">Settigs</string>
     <string name="log_out">Log out</string>
     <string name="error_adding_dog">Error adding dog</string>
+    <string name="title_request_camera_permission">Request camera permission title</string>
+    <string name="request_permission_camera_rationale">Request permission rationale</string>
+    <string name="error_showing_photo_uri">Error showing image no photo uri</string>
 </resources>

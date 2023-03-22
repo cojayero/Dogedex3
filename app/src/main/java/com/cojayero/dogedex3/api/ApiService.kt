@@ -45,6 +45,10 @@ interface ApiService {
     @Headers("${ApiServiceInterceptor.NEEDS_AUTH_KEY}: true" )
     @POST(ADD_DOG_TO_USER)
     suspend fun addDogToUser(@Body addDogToUserDTO: AddDogToUserDTO):DefaultResponse
+    @Headers("${ApiServiceInterceptor.NEEDS_AUTH_KEY}: true" )
+    @GET(GET_USER_DOGS_URL)
+    suspend fun getUserDogs():DogListApiResponse
+
 }
 
 object DogsApi {

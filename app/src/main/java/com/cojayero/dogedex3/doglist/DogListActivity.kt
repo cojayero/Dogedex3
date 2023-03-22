@@ -43,6 +43,11 @@ class DogListActivity : AppCompatActivity() {
             startActivity(intent)
 
         }
+        adapter.setOnLongItemClickListener {
+            Log.d(TAG,"~~~~~~~~~~~~~~~~~OnLongClick $it")
+            dogListViewModel.addDogToUser(it.id)
+        }
+
 
         recycler.adapter = adapter
         dogListViewModel.dogList.observe(this) { dogList ->
