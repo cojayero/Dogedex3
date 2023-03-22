@@ -11,10 +11,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.Preview
+import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import com.cojayero.dogedex3.api.ApiServiceInterceptor
@@ -24,7 +21,6 @@ import com.cojayero.dogedex3.databinding.ActivityMainBinding
 import com.cojayero.dogedex3.doglist.DogListActivity
 import com.cojayero.dogedex3.settings.SettingsActivity
 import com.cojayero.dogedex3.wholeimage.WholeImageActivity
-import com.cojayero.dogedex3.wholeimage.WholeImageActivity.Companion.PHOTO_URI_KEY
 import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -32,28 +28,25 @@ import java.util.concurrent.Executors
 private val TAG = MainActivity::class.java.simpleName
 
 class MainActivity : AppCompatActivity() {
-    private val requestPermissionLauncher =
-        registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ) { isGranted: Boolean ->
-            if (isGranted) {
-                // Permission is granted. Continue the action or workflow in your
-                // app.
-                //OPen Camera
-                setupCamera()
-            } else {
-                // Explain to the user that the feature is unavailable because the
-                // features requires a permission that the user has denied. At the
-                // same time, respect the user's decision. Don't link to system
-                // settings in an effort to convince the user to change their
-                // decision.
-                Toast.makeText(
-                    this,
-                    "You need to accept camera permision to use camera",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // Permission is granted. Continue the action or workflow in your
+            // app.
+            //OPen Camera
+            setupCamera()
+        } else {
+            // Explain to the user that the feature is unavailable because the
+            // features requires a permission that the user has denied. At the
+            // same time, respect the user's decision. Don't link to system
+            // settings in an effort to convince the user to change their
+            // decision.
+            Toast.makeText(
+                this, "You need to accept camera permision to use camera", Toast.LENGTH_SHORT
+            ).show()
         }
+    }
     private lateinit var binding: ActivityMainBinding
     private lateinit var imageCapture: ImageCapture
     private lateinit var cameraExecutor: ExecutorService
@@ -81,12 +74,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.takePhotoFab.setOnClickListener {
-            Log.d(TAG,"Click camera")
-            if(isCameraReady) {
-                Log.d(TAG,"--Take photo")
+            Log.d(TAG, "Click camera")
+            if (isCameraReady) {
+                Log.d(TAG, "--Take photo")
                 takePhoto()
             } else {
-                Log.d(TAG,"--CAmera is not ready")
+                Log.d(TAG, "--CAmera is not ready")
             }
         }
         requestCameraPermissions()
@@ -109,8 +102,7 @@ class MainActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             when {
                 ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.CAMERA
+                    this, Manifest.permission.CAMERA
                 ) == PackageManager.PERMISSION_GRANTED -> {
                     // You can use the API that requires the permission.
                     setupCamera()
@@ -121,10 +113,8 @@ class MainActivity : AppCompatActivity() {
                         .setMessage(getString(R.string.request_permission_camera_rationale))
                         .setPositiveButton(android.R.string.ok) { _, _ ->
                             requestPermissionLauncher.launch(Manifest.permission.CAMERA)
-                        }
-                        .setNegativeButton(android.R.string.cancel) { _, _ ->
-                        }
-                        .show()
+                        }.setNegativeButton(android.R.string.cancel) { _, _ ->
+                        }.show()
                 }
                 else -> {
                     // You can directly ask for the permission.
@@ -142,19 +132,20 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if(::cameraExecutor.isInitialized) {
+        if (::cameraExecutor.isInitialized) {
             cameraExecutor.shutdown()
         }
 
     }
+
     private fun setupCamera() {
         Log.d(TAG, "---->Inicializando cámara")
         binding.cameraPreview.post {
             //Esto se ejecuta una vez inicilizada la vista
 
-            imageCapture = ImageCapture.Builder()
-                .setTargetRotation(binding.cameraPreview.display.rotation)
-                .build()
+            imageCapture =
+                ImageCapture.Builder().setTargetRotation(binding.cameraPreview.display.rotation)
+                    .build()
             cameraExecutor = Executors.newSingleThreadExecutor()
             isCameraReady = true
             startCamera()
@@ -171,7 +162,20 @@ class MainActivity : AppCompatActivity() {
             val preview = Preview.Builder().build()
             preview.setSurfaceProvider(binding.cameraPreview.surfaceProvider)
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-            cameraProvider.bindToLifecycle(this, cameraSelector, preview,imageCapture)
+            //Añadimos la parte de image analysis
+            val imageAnalysis = ImageAnalysis.Builder()
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST).build()
+            imageAnalysis.setAnalyzer(cameraExecutor, ImageAnalysis.Analyzer { imageProxy ->
+                val rotationDegrees = imageProxy.imageInfo.rotationDegrees
+                // insert your code here.
+
+                // after done, release the ImageProxy object
+                imageProxy.close()
+            })
+            // .. Fin ImageAnalysis
+            cameraProvider.bindToLifecycle(
+                this, cameraSelector, preview, imageCapture, imageAnalysis
+            )
         }, ContextCompat.getMainExecutor(this))
 
     }
@@ -179,11 +183,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun takePhoto() {
         val outputFileOptions = ImageCapture.OutputFileOptions.Builder(getOutputPhotoFile()).build()
-        imageCapture.takePicture(outputFileOptions, cameraExecutor,
+        imageCapture.takePicture(
+            outputFileOptions,
+            cameraExecutor,
             object : ImageCapture.OnImageSavedCallback {
                 override fun onError(error: ImageCaptureException) {
                     // insert your code here.
                 }
+
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                     // insert your code here.
                     Log.d(TAG, "-------Image saved")
@@ -200,14 +207,13 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun getOutputPhotoFile():File{
+    private fun getOutputPhotoFile(): File {
         val mediaDir = externalMediaDirs.firstOrNull()?.let {
-            File(it,resources.getString(R.string.app_name) + ".jpg").apply { mkdirs() }
+            File(it, resources.getString(R.string.app_name) + ".jpg").apply { mkdirs() }
         }
-        return if (mediaDir !=null && mediaDir.exists()){
+        return if (mediaDir != null && mediaDir.exists()) {
             mediaDir
-        } else
-        {
+        } else {
             filesDir
         }
     }
