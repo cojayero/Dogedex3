@@ -8,14 +8,13 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
-import com.cojayero.dogedex3.MainActivity
+import com.cojayero.dogedex3.main.MainActivity
 import com.cojayero.dogedex3.R
 import com.cojayero.dogedex3.api.ApiResponseStatus
 import com.cojayero.dogedex3.auth.ui.main.LoginFragment
 import com.cojayero.dogedex3.auth.ui.main.LoginFragmentDirections
 import com.cojayero.dogedex3.auth.ui.main.SignUpFragment
 import com.cojayero.dogedex3.databinding.ActivityLoginBinding
-import com.cojayero.dogedex3.doglist.DogListActivity
 
 private val TAG = LoginActivity::class.java.simpleName
 

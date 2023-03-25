@@ -7,6 +7,7 @@ import com.cojayero.dogedex3.api.dto.SignUpDTO
 import com.cojayero.dogedex3.api.dto.UserDTO
 import com.cojayero.dogedex3.api.responses.AuthApiResponse
 import com.cojayero.dogedex3.api.responses.DefaultResponse
+import com.cojayero.dogedex3.api.responses.DogApiResponse
 import com.cojayero.dogedex3.api.responses.DogListApiResponse
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -48,6 +49,9 @@ interface ApiService {
     @Headers("${ApiServiceInterceptor.NEEDS_AUTH_KEY}: true" )
     @GET(GET_USER_DOGS_URL)
     suspend fun getUserDogs():DogListApiResponse
+
+    @GET(GET_DOG_BY_ML_ID)
+    suspend fun getDogByMlId(@Query("ml_id") mlId:String): DogApiResponse
 
 }
 

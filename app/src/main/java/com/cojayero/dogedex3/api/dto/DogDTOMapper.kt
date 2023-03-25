@@ -3,7 +3,7 @@ package com.cojayero.dogedex3.api.dto
 import com.cojayero.dogedex3.Dog
 
 class DogDTOMapper {
-    private fun fromDogDTOToDogDomain(dogDTO: DogDTO): Dog {
+     fun fromDogDTOToDogDomain(dogDTO: DogDTO): Dog {
 
         return Dog(
             dogDTO.id,

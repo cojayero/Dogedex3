@@ -12,7 +12,9 @@ import org.tensorflow.lite.support.label.TensorLabel
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
 import java.nio.MappedByteBuffer
 import java.util.*
+
 private val TAG = Classifier::class.java.simpleName
+
 class Classifier(tfLiteModel: MappedByteBuffer, private val labels: List<String>) {
 
     // Casi todo el código es boilerplate
@@ -25,12 +27,13 @@ class Classifier(tfLiteModel: MappedByteBuffer, private val labels: List<String>
 
     init {
         val tfLiteOptions = Interpreter.Options()
-        tfLiteOptions.setNumThreads(5)
+        tfLiteOptions.setNumThreads(5)  // número de hilos que va a utilizar el proceso.
+        // si no ponemos nada, lo ajusta Androif
         tfLite = Interpreter(tfLiteModel, tfLiteOptions)
 
         // Reads type and shape of input and output tensors, respectively.
         val imageTensorIndex = 0
-        val imageShape = tfLite.getInputTensor(imageTensorIndex).shape()
+        val imageShape = tfLite.getInputTensor(imageTensorIndex).shape() //[1, 224, 224,3]
         imageSizeY = imageShape[1]
         imageSizeX = imageShape[2]
         val imageDataType = tfLite.getInputTensor(imageTensorIndex).dataType()
@@ -39,7 +42,7 @@ class Classifier(tfLiteModel: MappedByteBuffer, private val labels: List<String>
             tfLite.getOutputTensor(probabilityTensorIndex).shape() // {1, NUM_CLASSES}
         val probabilityDataType = tfLite.getOutputTensor(probabilityTensorIndex).dataType()
 
-        // Creates the input tensor.
+        // Creates the input tensor. El que almacena las imágenes de entrada
         inputImageBuffer = TensorImage(imageDataType)
 
         // Creates the output tensor and its processor.
@@ -49,14 +52,16 @@ class Classifier(tfLiteModel: MappedByteBuffer, private val labels: List<String>
         )
 
         // Creates the post processor for the output probability.
-        tensorProcessor = TensorProcessor.Builder().add(DequantizeOp(0f, 1 / 255.0f)).build()
+        tensorProcessor = TensorProcessor
+            .Builder()
+            .add(DequantizeOp(0f, 1 / 255.0f)).build()
     }
-
     /**
      * Runs inference and returns the classification results.
      */
     fun recognizeImage(bitmap: Bitmap): List<DogRecognition> {
         inputImageBuffer = loadImage(bitmap)
+        // esto hace falta para que no se llene el buffe
         val rewoundOutputBuffer = outputProbabilityBuffer.buffer.rewind()
         tfLite.run(inputImageBuffer.buffer, rewoundOutputBuffer)
         // Gets the map of label and probability.
@@ -76,7 +81,13 @@ class Classifier(tfLiteModel: MappedByteBuffer, private val labels: List<String>
 
         // Creates processor for the TensorImage.
         val imageProcessor = ImageProcessor.Builder()
-            .add(ResizeOp(imageSizeX, imageSizeY, ResizeOp.ResizeMethod.NEAREST_NEIGHBOR))
+            .add(
+                ResizeOp(
+                    imageSizeX,
+                    imageSizeY,
+                    ResizeOp.ResizeMethod.NEAREST_NEIGHBOR
+                )
+            )
             .build()
         return imageProcessor.process(inputImageBuffer)
     }
@@ -90,17 +101,14 @@ class Classifier(tfLiteModel: MappedByteBuffer, private val labels: List<String>
             PriorityQueue(MAX_RECOGNITION_DOG_RESULTS) { lhs: DogRecognition, rhs: DogRecognition ->
                 (rhs.confidence).compareTo(lhs.confidence)
             }
-
         for ((key, value) in labelProb) {
             priorityQueue.add(DogRecognition(key, value * 100.0f))
         }
-
         val recognitions = mutableListOf<DogRecognition>()
         val recognitionsSize = minOf(priorityQueue.size, MAX_RECOGNITION_DOG_RESULTS)
         for (i in 0 until recognitionsSize) {
             recognitions.add(priorityQueue.poll()!!)
         }
-
         return recognitions
     }
 }

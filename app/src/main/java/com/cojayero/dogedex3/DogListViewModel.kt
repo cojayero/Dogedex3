@@ -26,7 +26,7 @@ class DogListViewModel : ViewModel() {
     private val dogRepository = DogRepository()
 
     init {
-getDogCollection()
+        getDogCollection()
     }
 
     private fun downloadDogs() {
@@ -44,13 +44,12 @@ getDogCollection()
         }
     }
 
-    private fun getDogCollection(){
+    private fun getDogCollection() {
         viewModelScope.launch {
             _status.value = ApiResponseStatus.Loading()
             handleDownloadStatus(dogRepository.getDogCollection())
         }
     }
-
 
 
     @SuppressLint("NullSafeMutableLiveData")
@@ -63,6 +62,8 @@ getDogCollection()
     }
 
     fun addDogToUser(dogId: Long) {
+        // Este no se usa ya, al mver del DogList al dogDetail el añadir el perro
+
         viewModelScope.launch {
             Log.d(TAG, "DogListViewModel-> $dogId")
             _status.value = ApiResponseStatus.Loading()
