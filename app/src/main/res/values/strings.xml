@@ -37,4 +37,5 @@
     <string name="title_request_camera_permission">Request camera permission title</string>
     <string name="request_permission_camera_rationale">Request permission rationale</string>
     <string name="error_showing_photo_uri">Error showing image no photo uri</string>
+    <string name="title_activity_dog_detail_compose">DogDetailComposeActivity</string>
 </resources>
