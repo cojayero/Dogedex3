@@ -1,11 +1,13 @@
 package com.cojayero.dogedex3.dogdetail
-import androidx.compose.foundation.Image
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -13,42 +15,36 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import com.cojayero.dogedex3.Dog
 import com.cojayero.dogedex3.R
+import com.cojayero.dogedex3.api.ApiResponseStatus
 import com.cojayero.dogedex3.dogdetail.ui.theme.Dogedex3Theme
 
 @Composable
-fun DogDetailScreen() {
+fun DogDetailScreen(
+    dog: Dog,
+    status: ApiResponseStatus<Any>? = null,
+    onButtonClicked: () -> Unit,
+    onErrorDialogDismiss: () -> Unit
+
+    ) {
     Box(
         modifier = Modifier
             .background(colorResource(id = R.color.secondary_background))
-            .padding(start = 8.dp, end = 8.dp, bottom = 16.dp),
+            .padding(
+                start = 8.dp,
+                end = 8.dp,
+                bottom = 16.dp
+            ),
         contentAlignment = Alignment.TopCenter
-
     )
-
     {
-        val dog = Dog(
-            1L,
-            78,
-            "Pug",
-            "Herding",
-            70.0,
-            77.4,
-            "https://i.blogs.es/811b9c/istock-520131419/1366_2000.jpeg",
-            "10-12",
-            "Friendly, PlayFull",
-            "5",
-            "6"
-        )
         DogInformation(dog)
         Image(
             modifier = Modifier
@@ -58,8 +54,19 @@ fun DogDetailScreen() {
             painter = rememberAsyncImagePainter(dog.imageUrl),
             contentDescription = dog.name
         )
-        FloatingActionButton(onClick = { /*TODO*/ }) {
-            
+        FloatingActionButton(
+            modifier = Modifier.align(alignment = Alignment.BottomCenter),
+            onClick = { onButtonClicked() }) {
+            Icon(
+                imageVector = Icons.Filled.Check,
+                contentDescription = ""
+            )
+
+        }
+        if (status is ApiResponseStatus.Loading) {
+            LoadingWheel()
+        } else if (status is ApiResponseStatus.Error) {
+            ErrorDialog(status = status, onDialogDismiss = onErrorDialogDismiss)
         }
     }
 }
@@ -246,7 +253,7 @@ private fun LifeIcon() {
             color = colorResource(id = R.color.color_primary)
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_heart_white ),
+                painter = painterResource(id = R.drawable.ic_heart_white),
                 contentDescription = null,
                 tint = Color.White,
                 modifier = Modifier
@@ -266,22 +273,57 @@ private fun LifeIcon() {
     }
 }
 
+
+@Composable
+fun ErrorDialog(
+    status: ApiResponseStatus.Error<Any>,
+    onDialogDismiss: () -> Unit, ) {
+    AlertDialog(
+        onDismissRequest = { /*TODO*/ },
+        title = { Text(stringResource(R.string.error_dialog_title)) },
+        text = { Text(stringResource(id = status.messageId)) },
+        confirmButton = {
+            Button(onClick = {onDialogDismiss()}){
+                Text(stringResource(R.string.try_again))
+            }
+
+        }
+    )
+}
+
 @Composable
 fun LoadingWheel() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        CircularProgressIndicator()
+        CircularProgressIndicator(
+            color = Color.Red
+        )
     }
 }
-
 
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun DogDetailScreenPreview() {
     Dogedex3Theme {
-        DogDetailScreen()
+        val dog = Dog(
+            1L,
+            78,
+            "Pug",
+            "Herding",
+            70.0,
+            77.4,
+            "https://i.blogs.es/811b9c/istock-520131419/1366_2000.jpeg",
+            "10-12",
+            "Friendly, PlayFull",
+            "5",
+            "6"
+        )
+        DogDetailScreen(dog,
+            onButtonClicked = { },
+            onErrorDialogDismiss = { }
+        )
     }
 }

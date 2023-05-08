@@ -15,6 +15,7 @@ import com.cojayero.dogedex3.api.ApiResponseStatus
 import com.cojayero.dogedex3.databinding.ActivityDogListBinding
 import com.cojayero.dogedex3.dogdetail.DogDetailActivity
 import com.cojayero.dogedex3.dogdetail.DogDetailActivity.Companion.DOG_KEY
+import com.cojayero.dogedex3.dogdetail.DogDetailComposeActivity
 
 private val TAG = DogListActivity::class.java.simpleName
 private const val GRID_LAYOUT_COLUMNS = 3
@@ -36,7 +37,7 @@ class DogListActivity : AppCompatActivity() {
             //Paso el dog a DogDetail activity
             val intent = Intent(
                 this,
-                DogDetailActivity::class.java
+                DogDetailComposeActivity::class.java
             )
             Log.d(TAG, "selected Dog $it")
             intent.putExtra(DOG_KEY, it)

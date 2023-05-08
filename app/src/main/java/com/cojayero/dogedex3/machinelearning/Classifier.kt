@@ -56,6 +56,7 @@ class Classifier(tfLiteModel: MappedByteBuffer, private val labels: List<String>
             .Builder()
             .add(DequantizeOp(0f, 1 / 255.0f)).build()
     }
+
     /**
      * Runs inference and returns the classification results.
      */

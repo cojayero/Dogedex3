@@ -28,17 +28,15 @@ class AuthRepository {
     }
 
     suspend fun login(email: String, password: String): ApiResponseStatus<User> = makeNetworkCall {
-
         val loginDTO = SignInDTO(email, password)
         val loginResponse = DogsApi.retrofitService.login(loginDTO)
         if (!loginResponse.isSuccess) {
             throw Exception(loginResponse.message)
         }
-
         val userDTO = loginResponse.data.user
         val userDTOMapper = UserDTOMapper()
         Log.d(TAG, "$userDTO")
-        userDTOMapper.fromUserDTOtoUserDomain(userDTO)
-
+        userDTOMapper
+            .fromUserDTOtoUserDomain(userDTO)
     }
 }

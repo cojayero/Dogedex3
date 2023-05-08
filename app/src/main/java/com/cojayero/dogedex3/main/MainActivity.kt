@@ -17,7 +17,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.core.content.ContextCompat
+import coil.annotation.ExperimentalCoilApi
 import com.cojayero.dogedex3.Dog
 import com.cojayero.dogedex3.LABEL_PATH
 import com.cojayero.dogedex3.MODEL_PATH
@@ -27,10 +30,8 @@ import com.cojayero.dogedex3.api.ApiServiceInterceptor
 import com.cojayero.dogedex3.auth.LoginActivity
 import com.cojayero.dogedex3.auth.User
 import com.cojayero.dogedex3.databinding.ActivityMainBinding
-import com.cojayero.dogedex3.dogdetail.DogDetailActivity
-import com.cojayero.dogedex3.dogdetail.DogDetailActivity.Companion.DOG_KEY
-import com.cojayero.dogedex3.dogdetail.DogDetailActivity.Companion.IS_RECOGNITION_KEY
-import com.cojayero.dogedex3.doglist.DogListActivity
+import com.cojayero.dogedex3.dogdetail.DogDetailComposeActivity
+import com.cojayero.dogedex3.doglist.DogListComposeActivity
 import com.cojayero.dogedex3.machinelearning.Classifier
 import com.cojayero.dogedex3.machinelearning.DogRecognition
 import com.cojayero.dogedex3.settings.SettingsActivity
@@ -40,9 +41,13 @@ import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-private val TAG = MainActivity::class.java.simpleName
+
+@ExperimentalFoundationApi
+@ExperimentalMaterialApi
+@ExperimentalCoilApi
 
 class MainActivity : AppCompatActivity() {
+    val TAG = MainActivity::class.java.simpleName
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
@@ -58,7 +63,9 @@ class MainActivity : AppCompatActivity() {
             // settings in an effort to convince the user to change their
             // decision.
             Toast.makeText(
-                this, "You need to accept camera permision to use camera", Toast.LENGTH_SHORT
+                this,
+                getString(R.string.camera_permission_rejected_message),
+                Toast.LENGTH_SHORT
             ).show()
         }
     }
@@ -70,6 +77,7 @@ class MainActivity : AppCompatActivity() {
     private var isCameraReady = false
     private val viewModel by viewModels<MainViewModel>()
 
+    @OptIn(ExperimentalFoundationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityMainBinding.inflate(layoutInflater)
         loadingWheel = binding.loadingWheelMain
@@ -122,14 +130,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openDogDetailActivity(dog: Dog) {
-        val intent = Intent(this, DogDetailActivity::class.java)
-        intent.putExtra(DOG_KEY, dog)
-        intent.putExtra(IS_RECOGNITION_KEY, true)
+        val intent = Intent(this, DogDetailComposeActivity()::class.java)
+        intent.putExtra(DogDetailComposeActivity.DOG_KEY, dog)
+        intent.putExtra(DogDetailComposeActivity.IS_RECOGNITION_KEY, true)
         startActivity(intent)
     }
 
     private fun openDogListActivity() {
-        startActivity(Intent(this, DogListActivity::class.java))
+        startActivity(Intent(this, DogListComposeActivity::class.java))
     }
 
     private fun openSettingsActivity() {

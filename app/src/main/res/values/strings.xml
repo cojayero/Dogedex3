@@ -38,4 +38,8 @@
     <string name="request_permission_camera_rationale">Request permission rationale</string>
     <string name="error_showing_photo_uri">Error showing image no photo uri</string>
     <string name="title_activity_dog_detail_compose">DogDetailComposeActivity</string>
+    <string name="error_dialog_title">Ops, something happened</string>
+    <string name="try_again">Try again</string>
+    <string name="camera_permission_rejected_message">You need to accept camera permision to use camera</string>
+    <string name="my_dog_collection">My dog collection</string>
 </resources>

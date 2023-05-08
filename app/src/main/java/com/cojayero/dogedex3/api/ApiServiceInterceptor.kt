@@ -19,7 +19,6 @@ object ApiServiceInterceptor : Interceptor {
         val requestBuilder = request.newBuilder()
         val headers = request.headers(NEEDS_AUTH_KEY)
         Log.d(TAG, "$headers  ${headers.javaClass.simpleName}")
-
         if (request.headers(NEEDS_AUTH_KEY).isNotEmpty()) {
             // needs credentials
             Log.d(TAG, "Intercept: needs credentials")
@@ -29,9 +28,7 @@ object ApiServiceInterceptor : Interceptor {
             } else {
                 Log.d(TAG, "Intercept: Auth-token: $sessionToken")
                 requestBuilder.addHeader("AUTH-TOKEN", sessionToken!!)
-
             }
-
         } else {
             Log.d(TAG, "header :: ->$request.headers(NEEDS_AUTH_KEY)")
         }
